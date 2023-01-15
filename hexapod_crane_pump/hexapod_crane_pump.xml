@@ -1,0 +1,9 @@
+<!-- hexapod_crane_pump listener -->
+<library path="lib/hexapod_crane_pump">
+  <class name="hexapod_crane_pump/hexapod_crane_pump" type="hexapod_crane_pump" 
+    base_class_type="nodelet::Nodelet">
+    <description>
+      hexapod_crane_pump listener.
+    </description>
+  </class>
+</library>

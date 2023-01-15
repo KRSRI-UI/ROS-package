@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- cranePump launch file -->
+
+<launch>
+    <node name="Hexapod_Crane_Pump" pkg="hexapod_crane_pump" type="hexapod_crane_pump" output="screen" />
+</launch>
