@@ -1,12 +1,13 @@
 ## Komponen Robot
+
 - 3 buah Baterai LiPo LPBpower 2200 mAH 3S 25C
 - Raspberry Pi 4B RAM 8Gb
 - Pi Camera V2.1
 - 6 buah Dynamixel AX-12A
 - 12 buah Dynamixel AX-18A
 - MPU 9250/6500
-- RPLidar A1M1 mirip dengan A1M8
-- Servo PWM MG90S
+- RPLidar A1M1
+- Servo PWM MG996R
 - Mini DC 12V Brushless Pump AD20P – 1230A Hmax 300CM Qmax 240 L / H
 - Robotis U2D2
 - Relay 3.3V
