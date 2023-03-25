@@ -14,5 +14,5 @@
     <node name="Hexapod_Teleop_Joystick" pkg="hexapod_teleop_joystick" type="hexapod_teleop_joystick" />
     <node name="keyboard" pkg="keyboard" type="keyboard"/>
     <node name="key_board_to_joy_node" pkg="key_board_to_joy" type="key_board_to_joy_node" />
-    <include file="$(find hexapod_bringup)/launch/rviz.launch" />
+    <!--<include file="$(find hexapod_bringup)/launch/rviz.launch" /> /-->
 </launch>
