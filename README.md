@@ -39,7 +39,7 @@ Thanks to Shubhankar Das there are two gaits offered, the original sinusoidal tr
 ## 3. Dependencies
 
 ```
-sudo apt-get install git
+sudo apt install git
 sudo apt install ros-noetic-sound-play
 sudo apt install ros-noetic-openni2-launch
 sudo apt install ros-noetic-joy
@@ -58,7 +58,7 @@ sudo apt install ros-noetic-imu-filter-madgwick
 sudo apt install ros-noetic-ros-controllers
 sudo apt install ros-noetic-ros-control
 sudo apt install ros-noetic-spacenav-node
-sudo apt-get install libusb-1.0-0-dev
+sudo apt install libusb-1.0-0-dev
 sudo apt install libsdl-dev
 
 sudo apt install ros-noetic-gazebo-ros-pkgs
@@ -104,13 +104,14 @@ This package has all the param files. You will start with one of the param confi
 
 
 **Example Launch Command**
+*Keyboard Teleop*
 ```
-roslaunch hexapod_bringup hexapod_full.launch config:=phantomX joy_mapping:=joystick_ds3
+roslaunch hexapod_bringup hexapod_simple.launch
 ```
 ## 5. Install
 
 ```
-git clone https://github.com/KevinOchs/hexapod_ros.git . 
+git clone https://github.com/KRSRI-UI/ROS-package.git
 ```
 
 For Raspberry Pi2 please add these compiler optimizations after first build.
@@ -132,17 +133,17 @@ _Click on picture for redirect to YouTube video._
 
 Rviz recording of 3D mapping using RTABmap.
 
-[![ScreenShot](http://img.youtube.com/vi/-3Ejgy1nFOg/0.jpg)]
+![ScreenShot](http://img.youtube.com/vi/-3Ejgy1nFOg/0.jpg)
 (https://www.youtube.com/watch?v=-3Ejgy1nFOg)
 
 Small video of Golem research platform and IMU testing.
 
-[![ScreenShot](http://img.youtube.com/vi/IP-1HebkZnU/0.jpg)]
+![ScreenShot](http://img.youtube.com/vi/IP-1HebkZnU/0.jpg)
 (https://www.youtube.com/watch?v=IP-1HebkZnU)
 
 Renée Love's odometry test video using the phantomX.
 
-[![ScreenShot](http://img.youtube.com/vi/VYBAM0MrvWI/0.jpg)]
+![ScreenShot](http://img.youtube.com/vi/VYBAM0MrvWI/0.jpg)
 (https://www.youtube.com/watch?v=VYBAM0MrvWI)
 
 

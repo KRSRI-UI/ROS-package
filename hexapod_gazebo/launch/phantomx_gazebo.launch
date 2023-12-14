@@ -14,4 +14,6 @@
 
     <!-- Insert the controllers launch file -->
     <include file="$(find hexapod_gazebo)/launch/phantomx_control.launch"/>
+    
+    <node name="hexapod_walker" pkg="hexapod_gazebo" type="walker.py" />
 </launch>
