@@ -104,6 +104,7 @@ This package has all the param files. You will start with one of the param confi
 
 
 **Example Launch Command**
+
 *Keyboard Teleop*
 ```
 roslaunch hexapod_bringup hexapod_simple.launch
@@ -133,28 +134,39 @@ _Click on picture for redirect to YouTube video._
 
 Rviz recording of 3D mapping using RTABmap.
 
-![ScreenShot](http://img.youtube.com/vi/-3Ejgy1nFOg/0.jpg)
-(https://www.youtube.com/watch?v=-3Ejgy1nFOg)
+[![ScreenShot](http://img.youtube.com/vi/-3Ejgy1nFOg/0.jpg)](https://www.youtube.com/watch?v=-3Ejgy1nFOg)
+
+https://www.youtube.com/watch?v=-3Ejgy1nFOg
+
+
 
 Small video of Golem research platform and IMU testing.
 
-![ScreenShot](http://img.youtube.com/vi/IP-1HebkZnU/0.jpg)
-(https://www.youtube.com/watch?v=IP-1HebkZnU)
+[![ScreenShot](http://img.youtube.com/vi/IP-1HebkZnU/0.jpg)](https://www.youtube.com/watch?v=IP-1HebkZnU)
+
+https://www.youtube.com/watch?v=IP-1HebkZnU
+
+
 
 Renée Love's odometry test video using the phantomX.
 
-![ScreenShot](http://img.youtube.com/vi/VYBAM0MrvWI/0.jpg)
-(https://www.youtube.com/watch?v=VYBAM0MrvWI)
+[![ScreenShot](http://img.youtube.com/vi/VYBAM0MrvWI/0.jpg)](https://www.youtube.com/watch?v=VYBAM0MrvWI)
+
+https://www.youtube.com/watch?v=VYBAM0MrvWI
+
 
 
 ## Pictures
 
 Rviz screenshot of point cloud and laserscan active.
+
 ![ScreenShot](http://forums.trossenrobotics.com/gallery/files/8/6/6/6/depthwithlaser.jpg)
 
 2D room mapping in Rviz.
+
 ![ScreenShot](http://forums.trossenrobotics.com/gallery/files/8/6/6/6/2d_slam.jpg)
 
 Renée Love's adaptation of the Hexapod stack for Trossen's  [PhantomX](http://www.trossenrobotics.com/phantomx-ax-hexapod.aspx).
+
 ![ScreenShot](http://forums.trossenrobotics.com/gallery/files/1/2/6/6/9/screenshot_from_2015-04-22_20_23_15.png)
 
