@@ -1,0 +1,5 @@
+<launch>
+	<param name="robot_description" command="cat '$(find hexapod_urdf)/urdf/hexapod2022.urdf'" />
+	<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model Hexapod2022 -param robot_description"/>
+	<node name="gazebo" pkg="gazebo_ros" type="gazebo"/>
+</launch>
