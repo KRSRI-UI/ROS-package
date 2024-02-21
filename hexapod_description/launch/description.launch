@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+    <arg name="robot_name" default="reignblaze"/>
+    <!-- <arg name="tf_prefix" default="reignblaze"/> -->
+    <!-- <arg name="laser_view" default="false" /> -->
+
+
+    <!-- Convert the xacro description into the parameter server -->
+    <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hexapod_description)/urdf/jethexa.urdf.xacro' tf_prefix:=$(arg tf_prefix) robot_name:=$(arg robot_name) laser_view:=$(arg laser_view)" /> -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find hexapod_description)/urdf/$(arg robot_name)_model.xacro'"/>
+
+
+
+
+
+    <!-- Convert joint states to TF transforms for rviz, etc -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+        <!-- <param name="publish_frequency" type="double" value="50.0" /> -->
+        <!-- <param name="tf_prefix" value="$(arg tf_prefix)" /> -->
+        <remap from="/joint_states" to="/$(arg robot_name)/joint_states"/>
+    </node>
+</launch>

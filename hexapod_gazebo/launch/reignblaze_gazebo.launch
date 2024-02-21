@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="robot_name" default="reignblaze" />
+
+    <!-- Launch Gazebo with an empty world -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="/home/aldy/Desktop/provingGround.world"/>
+        <!-- <arg name="world_name" value="worlds/empty.world"/> -->
+        <arg name="paused" value="true"/>
+    </include>
+
+    <include file="$(find hexapod_description)/launch/description.launch">
+        <arg name="robot_name" value="$(arg robot_name)" />
+    </include>
+
+    <!-- Spawn the robot into Gazebo -->
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model reignblaze -z 0.54"/>
+
+    <!-- Insert the controllers launch file -->
+    <include file="$(find hexapod_gazebo)/launch/reignblaze_control.launch"/>
+
+    <include file="$(find hexapod_bringup)/launch/hexapod_simple.launch">
+        <arg name="config" value="$(arg robot_name)"/>
+    </include>
+
+    <include file="$(find gazebo_odom)/launch/start_gazebo_odom.launch"/>
+    
+</launch>

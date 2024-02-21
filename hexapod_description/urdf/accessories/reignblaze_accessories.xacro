@@ -1,0 +1,272 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Turtle Camera Link -->
+  <xacro:arg name="camera_visual" default="false"/>
+  <xacro:property name="r200_cam_rgb_px" value="0.005"/>
+  <xacro:property name="r200_cam_rgb_py" value="0.018"/>
+  <xacro:property name="r200_cam_rgb_pz" value="0.013"/>
+  <xacro:property name="r200_cam_depth_offset" value="0.01"/>
+
+  <!-- <xacro:include filename="$(find realsense_ros_gazebo)/xacro/tracker.xacro"/> -->
+
+  <!-- <xacro:realsense_T265 sensor_name="camera_T265" parent_link="slam_pack_mount_point" rate="10.0">
+    <origin xyz="0.14155 0.0 0.05" rpy="0 0 0"/>
+  </xacro:realsense_T265> -->
+
+  <!-- <xacro:include filename="$(find realsense_ros_gazebo)/xacro/depthcam.xacro"/> -->
+
+  <!-- <xacro:realsense_d435 sensor_name="d435" parent_link="slam_pack_mount_point" rate="10">
+    <origin rpy="0 0 0 " xyz="0.145 0 0.0125"/>
+  </xacro:realsense_d435> -->
+
+  <joint name="slam_pack_mount_point" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="body_link" />
+    <child link="slam_pack_mount_point" />
+  </joint>
+
+  <link name="slam_pack_mount_point"/>
+
+<!--
+  <link name="camera_link_435">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.025 0.089 0.025"/>
+      </geometry>
+      <material name="grey">
+        <color rgba="0.5 0.5 0.5 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="camera_link_joint" type="fixed">
+    <parent link="slam_pack_mount_point"/>
+    <child link="camera_link_435"/>
+    <origin xyz="0.145 0 0.0125" rpy="0 0 0"/>
+  </joint>
+
+  <link name="depth_image_link"/>
+
+  <joint name="depth_image_link_joint" type="fixed">
+    <parent link="camera_link_435"/>
+    <child link="depth_image_link"/>
+    <origin xyz="0 0 0" rpy="-${pi /2} 0 -${pi /2}"/>
+  </joint>
+
+  <gazebo reference="camera_link_435">
+    <sensor name="gazebo_realsense_435" type="depth">
+      <plugin name="gazebo_realsense_435_controller" filename="libgazebo_ros_openni_kinect.so">
+        <alwayson>true</alwayson>
+        <updaterate>10.0</updaterate>
+        <frameName>depth_image_link</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+-->
+
+  <link name="lidar_link">
+    <visual>
+      <origin xyz="0.001 0.0 -0.0285" rpy="${pi/2} 0.0 ${pi}"/>
+      <geometry>
+        <mesh filename="package://hexapod_description/meshes/reignblaze/lidar.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="light_black">
+        <color rgba="0.4 0.4 0.4 1.0"/>
+      </material>
+    </visual>
+    <!--
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="0.220" />
+      <inertia ixx="1.214e-4"
+               ixy="0.0" iyy="1.214e-4"
+               ixz="0.0" iyz="0.0" izz="1.597e-4" />
+    </inertial>
+    -->
+  </link>
+
+  <joint name="lidar_link_joint" type="fixed">
+    <parent link="slam_pack_mount_point"/>
+    <child link="lidar_link"/>
+    <origin xyz="0.0 0.0 0.13" rpy="0 0 ${pi}"/>
+  </joint>
+
+  <gazebo reference="lidar_link">
+    <sensor name="gazebo_lidar" type="ray">
+      <update_rate>10.0</update_rate>
+      <plugin name="gazebo_lidar" filename="libgazebo_ros_laser.so">
+        <topicName>scan</topicName>
+        <namespace></namespace>
+        <outputType>sensor_msgs/LaserScan</outputType>
+        <frameName>lidar_link</frameName>
+      </plugin>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.120</min>
+          <max>20</max>
+          <resolution>0.015</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+    </sensor>
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
+  <link name="imu_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.01 0.002"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0.0 0.0 0.8 1.0"/>
+      </material>
+    </visual>
+    <!--
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="0.04" />
+      <inertia ixx="3.467e-7"
+               ixy="0.0" iyy="3.467e-7"
+               ixz="0.0" iyz="0.0" izz="6.667e-7" />
+    </inertial>
+    -->
+  </link>
+
+  <joint name="imu_link_joint" type="fixed">
+    <parent link="slam_pack_mount_point"/>
+    <child link="imu_link"/>
+    <origin xyz="0.0 0.0 0.02225" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="imu_link">
+    <sensor name="gazebo_imu" type="imu">
+      <plugin name="gazebo_imu" filename="libgazebo_ros_imu_sensor.so">
+        <updateRateHZ>10.0</updateRateHZ>
+        <topicName>/imu</topicName>
+        <frameName>imu_link</frameName>
+      </plugin>
+    </sensor>
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <!-- Turtle Camera Link -->
+
+  <joint name="turtle_camera_joint" type="fixed">
+    <origin xyz="0.145 -0.065 -0.0250" rpy="0 0 0"/>
+    <parent link="slam_pack_mount_point"/>
+    <child link="turtle_camera_link"/>
+  </joint>
+
+  <link name="turtle_camera_link">
+    <visual>
+     <origin xyz="0 0 0" rpy="1.57 0 1.57"/>
+      <geometry>
+       <mesh filename="package://turtlebot3_description/meshes/sensors/r200.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.003 0.065 0.007" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.012 0.132 0.020"/>
+      </geometry>
+    </collision>
+
+    <!-- This inertial field needs doesn't contain reliable data!! -->
+<!--   <inertial>
+      <mass value="0.564" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.003881243" ixy="0.0" ixz="0.0"
+               iyy="0.000498940" iyz="0.0"
+               izz="0.003879257" />
+    </inertial>-->
+  </link>
+
+  <joint name="camera_rgb_joint" type="fixed">
+    <origin xyz="${r200_cam_rgb_px} ${r200_cam_rgb_py} ${r200_cam_rgb_pz}" rpy="0 0 0"/>
+    <parent link="turtle_camera_link"/>
+    <child link="camera_rgb_frame"/>
+  </joint>
+  <link name="camera_rgb_frame"/>
+
+  <joint name="camera_rgb_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    <parent link="camera_rgb_frame"/>
+    <child link="camera_rgb_optical_frame"/>
+  </joint>
+  <link name="camera_rgb_optical_frame"/>
+
+  <joint name="camera_depth_joint" type="fixed">
+    <origin xyz="${r200_cam_rgb_px} ${r200_cam_rgb_py + r200_cam_depth_offset} ${r200_cam_rgb_pz}" rpy="0 0 0"/>
+    <parent link="turtle_camera_link"/>
+    <child link="camera_depth_frame"/>
+  </joint>
+  <link name="camera_depth_frame"/>
+
+  <joint name="camera_depth_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    <parent link="camera_depth_frame"/>
+    <child link="camera_depth_optical_frame"/>
+  </joint>
+  <link name="camera_depth_optical_frame"/>
+
+  <gazebo reference="camera_rgb_frame">
+    <sensor type="depth" name="realsense_R200">
+    <pose >0 0 0 0 0 0 </pose>
+      <always_on>true</always_on>
+      <visualize>$(arg camera_visual)</visualize>
+      <camera>
+          <horizontal_fov>1.3439</horizontal_fov>
+          <image>
+              <width>1920</width>
+              <height>1080</height>
+              <format>R8G8B8</format>
+          </image>
+          <depth_camera></depth_camera>
+          <clip>
+              <near>0.03</near>
+              <far>100</far>
+          </clip>
+      </camera>
+      <plugin name="camera_controller" filename="libgazebo_ros_openni_kinect.so">
+        <baseline>0.2</baseline>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>30.0</updateRate>
+        <cameraName>camera</cameraName>
+        <frameName>camera_rgb_optical_frame</frameName>
+        <imageTopicName>rgb/image_raw</imageTopicName>
+        <depthImageTopicName>depth/image_raw</depthImageTopicName>
+        <pointCloudTopicName>depth/points</pointCloudTopicName>
+        <cameraInfoTopicName>rgb/camera_info</cameraInfoTopicName>
+        <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
+        <pointCloudCutoff>0.4</pointCloudCutoff>
+            <hackBaseline>0.07</hackBaseline>
+            <distortionK1>0.0</distortionK1>
+            <distortionK2>0.0</distortionK2>
+            <distortionK3>0.0</distortionK3>
+            <distortionT1>0.0</distortionT1>
+            <distortionT2>0.0</distortionT2>
+        <CxPrime>0.0</CxPrime>
+        <Cx>0.0</Cx>
+        <Cy>0.0</Cy>
+        <focalLength>0</focalLength>
+        <hackBaseline>0</hackBaseline>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>
