@@ -170,3 +170,49 @@ Renée Love's adaptation of the Hexapod stack for Trossen's  [PhantomX](http://w
 
 ![ScreenShot](http://forums.trossenrobotics.com/gallery/files/1/2/6/6/9/screenshot_from_2015-04-22_20_23_15.png)
 
+
+## 6. How To Use:
+
+### Turtlebot Launch:
+```
+export TURTLEBOT3_MODEL=waffle
+roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch
+```
+```
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+```
+```
+export TURTLEBOT3_MODEL=waffle
+roslaunch rtabmap_demos demo_turtlebot3_navigation.launch
+```
+
+### Reignblaze-Gazebo Launch:
+```
+# roslaunch hexapod_navigation launchfile_sample.launch
+roslaunch hexapod_navigation depthimage_to_laserscan.launch
+```
+
+### Open-VINS ROS1 Install:
+```
+sudo apt-get install libeigen3-dev libboost-all-dev libceres-dev
+sudo apt-get install python3-catkin-tools python3-osrf-pycommon
+
+cd src
+git clone https://github.com/rpng/open_vins/
+cd ..
+catkin build
+catkin_make
+
+cd /home/aldy/datasets/euroc_mav/
+wget http://robotics.ethz.ch/~asl-datasets/ijrr_euroc_mav_dataset/vicon_room1/V1_01_easy/V1_01_easy.bag
+```
+
+### Open-VINS Launch:
+```
+cd catkin_ws_ov/
+source devel/setup.bash
+roslaunch ov_msckf subscribe.launch config:=euroc_mav dobag:=true
+```
+```
+rviz
+```
