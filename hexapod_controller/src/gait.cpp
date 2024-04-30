@@ -116,7 +116,7 @@ void Gait::gaitCycle( const geometry_msgs::Twist &cmd_vel, hexapod_msgs::FeetPos
     // Convert velocities into actual distance for gait/foot positions
     geometry_msgs::Pose2D base;
     base.x = cmd_vel.linear.x / PI * CYCLE_LENGTH;
-    base.y = cmd_vel.linear.y / PI * CYCLE_LENGTH;
+    base.y = cmd_vel.linear.y / -PI * CYCLE_LENGTH;
     base.theta = cmd_vel.angular.z / PI * CYCLE_LENGTH;
 
     // Low pass filter on the values to avoid jerky movements due to rapid value changes
