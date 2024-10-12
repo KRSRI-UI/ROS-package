@@ -1,0 +1,194 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <joint name="slam_pack_mount_point" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="body_link" />
+    <child link="slam_pack_mount_point" />
+  </joint>
+
+  <link name="slam_pack_mount_point"/>
+
+<!-- CAMERA_1 sensor_d435i: -->
+  <xacro:arg name="name" default="cam_d435i" />
+
+<!-- Based on https://github.com/IntelRealSense/realsense-ros/blob/ros1-legacy/realsense2_description/urdf/test_d435i_camera.urdf.xacro -->
+  <xacro:arg name="use_nominal_extrinsics" default="true" />  <!-- Use the nominal extrinsics between camera frames if the calibrated extrinsics aren't being published. e.g. running the device in simulation  -->
+  <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro"/>
+
+  <!-- <link name="slam_pack_mount_point"/> -->
+  <xacro:sensor_d435i parent="slam_pack_mount_point" use_nominal_extrinsics="$(arg use_nominal_extrinsics)" name="$(arg name)">
+    <origin xyz="0.1475 0 0.002" rpy="0 0 0"/>
+  </xacro:sensor_d435i>
+
+<!-- Based on https://github.com/m-tartari/realsense_gazebo_description/blob/master/urdf/_d435i.urdf.xacro -->
+  <xacro:include filename="$(find realsense_gazebo_description)/urdf/_d435i.gazebo.xacro"/>
+
+    <xacro:property name="name" value="$(arg name)"/>
+    <xacro:property name="topics_ns" value="$(arg name)"/>
+    <xacro:property name="visualize" value="false"/>
+    <xacro:property name="align_depth" value="false"/>
+    <xacro:property name="enable_pointCloud" value="false"/>
+
+    <xacro:property name="unite_imu_method" value="false"/>
+    <xacro:property name="accel_fps" value="250"/>
+    <xacro:property name="gyro_fps" value="400"/>
+
+    <xacro:property name="clip_distance" value="-1.0"/>
+    <xacro:property name="depth_width" value="1280"/>
+    <xacro:property name="depth_height" value="720"/>
+    <xacro:property name="depth_fps" value="30"/>
+
+    <xacro:property name="infra_width" value="640"/>
+    <xacro:property name="infra_height" value="480"/>
+    <xacro:property name="infra_fps" value="30"/>
+    
+    <xacro:property name="color_width" value="1920"/>
+    <xacro:property name="color_height" value="1080"/>
+    <xacro:property name="color_fps" value="30"/>
+
+    <!-- Realsense Gazebo Plugin -->
+    <xacro:gazebo_d435i camera_name="${name}"
+                        topics_ns="${topics_ns}"
+                        reference_link="${name}_link"
+
+                        depth_optical_frame="${name}_depth_optical_frame"
+                        depth_width="${depth_width}"
+                        depth_height="${depth_height}"
+                        depth_fps="${depth_fps}"
+
+                        color_optical_frame="${name}_color_optical_frame"
+                        color_width="${color_width}"
+                        color_height="${color_height}"
+                        color_fps="${color_fps}"
+
+                        infrared1_optical_frame="${name}_left_ir_optical_frame"
+                        infrared2_optical_frame="${name}_right_ir_optical_frame"
+                        infra_width="${infra_width}"
+                        infra_height="${infra_height}"
+                        infra_fps="${infra_fps}"
+
+                        accel_optical_frame="${name}_accel_optical_frame"
+                        gyro_optical_frame="${name}_gyro_optical_frame"
+                        accel_fps="${accel_fps}"
+                        gyro_fps="${gyro_fps}"
+
+                        enable_pointCloud="${enable_pointCloud}"
+                        unite_imu_method="${unite_imu_method}"
+                        clip_distance="${clip_distance}"
+                        align_depth="${align_depth}"
+                        visualize="${visualize}"
+    />
+<!-- CAMERA_1 sensor_d435i -->
+
+
+<!-- CAMERA_2 sensor_t265: -->
+<!-- Based on https://github.com/m-tartari/realsense_gazebo_description/tree/master#use -->
+  <xacro:include filename="$(find realsense_gazebo_description)/urdf/_t265.urdf.xacro"/>
+  <!-- odom_xyz and odom_rpy parameters are used as a base for odometry, they represent the transformation from the robot slam_pack_mount_point -->
+  <xacro:sensor_t265  parent="slam_pack_mount_point" name="cam_t265" topics_ns="cam_t265"
+                      odom_xyz="0.15 0.008125 0.0585" odom_rpy="0.0 0.0 0.0">
+    <origin xyz="0.15 0.008125 0.0585" rpy="0.0 0.0 0.0"/>
+  </xacro:sensor_t265>
+<!-- CAMERA_2 sensor_t265 -->
+
+
+  <link name="lidar_link">
+    <visual>
+      <origin xyz="0.001 0.0 -0.0285" rpy="${pi/2} 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://hexapod_description/meshes/reignblaze/lidar.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="light_black">
+        <color rgba="0.4 0.4 0.4 1.0"/>
+      </material>
+    </visual>
+    <!--
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="0.220" />
+      <inertia ixx="1.214e-4"
+               ixy="0.0" iyy="1.214e-4"
+               ixz="0.0" iyz="0.0" izz="1.597e-4" />
+    </inertial>
+    -->
+  </link>
+
+  <joint name="lidar_link_joint" type="fixed">
+    <parent link="slam_pack_mount_point"/>
+    <child link="lidar_link"/>
+    <origin xyz="0.0 0.0 0.13" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="lidar_link">
+    <sensor name="gazebo_lidar" type="ray">
+      <update_rate>10.0</update_rate>
+      <plugin name="gazebo_lidar" filename="libgazebo_ros_laser.so">
+        <topicName>scan</topicName>
+        <namespace></namespace>
+        <outputType>sensor_msgs/LaserScan</outputType>
+        <frameName>lidar_link</frameName>
+      </plugin>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.120</min>
+          <max>20</max>
+          <resolution>0.015</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+    </sensor>
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
+  <link name="imu_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.01 0.002"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0.0 0.0 0.8 1.0"/>
+      </material>
+    </visual>
+    <!--
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="0.04" />
+      <inertia ixx="3.467e-7"
+               ixy="0.0" iyy="3.467e-7"
+               ixz="0.0" iyz="0.0" izz="6.667e-7" />
+    </inertial>
+    -->
+  </link>
+
+  <joint name="imu_link_joint" type="fixed">
+    <parent link="slam_pack_mount_point"/>
+    <child link="imu_link"/>
+    <origin xyz="0.0 0.0 0.02225" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="imu_link">
+    <sensor name="gazebo_imu" type="imu">
+      <plugin name="gazebo_imu" filename="libgazebo_ros_imu_sensor.so">
+        <updateRateHZ>10.0</updateRateHZ>
+        <topicName>/imu</topicName>
+        <frameName>imu_link</frameName>
+      </plugin>
+    </sensor>
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+</robot>

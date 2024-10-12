@@ -2,7 +2,7 @@
 
 <launch>
 
-    <!-- Load joint controller configuration file -->
+    <!-- Load joint controller configurations from YAML file to parameter server -->
     <rosparam file="$(find hexapod_gazebo)/config/phantomx_control.yaml" command="load"/>
 
     <!-- Load the controllers -->
@@ -30,7 +30,7 @@
         joint_state_controller"
     />
 
-    <!-- Convert joint states to TF transforms -->
+    <!-- Convert joint states to TF transforms for rviz, etc -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
         respawn="false" output="screen">
         <remap from="/joint_states" to="/phantomX/joint_states"/>

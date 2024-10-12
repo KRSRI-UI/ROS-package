@@ -3,6 +3,7 @@
 
 <launch>
     <node name="Hexapod_Controller" pkg="hexapod_controller" type="hexapod_controller" output="screen" />
-    <!--<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />-->
+    <!-- <node name="Joint_Command_Publisher" pkg="hexapod_controller" type="joint_command_publisher" output="screen" /> -->
+    <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" /> -->
 </launch>
 

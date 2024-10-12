@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <launch>
-	<node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop" output="screen">
-	  	<param name="~speed" value="0.01"/>
-	  	<param name="~turn" value="0.02"/>
+	<node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop_twist_keyboard" output="screen">
+	  	<param name="~speed" value="0.225"/>
+	  	<param name="~turn" value="1.65"/>
 	</node>
 	<node pkg="rostopic" type="rostopic" name="rostopic_pub_node" output="screen" args="pub -1 /state std_msgs/Bool 'data: true'" />
 </launch>

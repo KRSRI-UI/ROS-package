@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <node name="gazebo_odom_pub" pkg="gazebo_odom" type="gazebo_odom.py" output="screen">
+    </node>
+</launch>

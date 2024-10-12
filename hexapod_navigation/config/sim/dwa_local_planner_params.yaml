@@ -1,0 +1,58 @@
+DWAPlannerROS:
+
+# Robot Configuration Parameters - Kobuki
+  max_vel_x: 0.4  # 0.55
+  min_vel_x: -0.15 
+  # min_vel_x: 0
+
+  max_vel_y: 0.0  # diff drive robot
+  min_vel_y: 0.0  # diff drive robot
+
+# The velocity when robot is moving in a straight line
+  max_vel_trans: 0.3 # choose slightly less than the base's capability
+  min_vel_trans: 0.0  # this is the min trans velocity when there is negligible rotational velocity
+
+  max_vel_theta: 3.14
+  min_vel_theta: 0.0 # to make a sharp turn make this low
+
+  acc_lim_x: 3.0  # to lowest accel with good sharp turn and no oscillattion
+  # acc_lim_x: 5.0  # to fastest acccel with good movement
+  acc_lim_y: 0.0
+  acc_lim_theta: 5.0
+
+# Goal Tolerance Parametes
+  xy_goal_tolerance: 0.2
+  yaw_goal_tolerance: 0.4
+  latch_xy_goal_tolerance: false
+
+# Forward Simulation Parameters
+  sim_time: 2.0
+  vx_samples: 20
+  vy_samples: 0
+  vth_samples: 40
+  controller_frequency: 10.0
+
+# Trajectory Scoring Parameters
+  # path_distance_bias: 5.0   # works for very narrow location
+  # goal_distance_bias: 0.8   # works for very narrow location
+  # occdist_scale: 0.05       # works for very narrow location
+  # path_distance_bias: 10.0    # best config so faar
+  # goal_distance_bias: 5.0     # best config so faar
+  # occdist_scale: 0.05         # best config so faar
+  path_distance_bias: 10.0
+  goal_distance_bias: 5.0
+  occdist_scale: 0.05
+  # path_distance_bias: 64.0
+  # goal_distance_bias: 32.0
+  # occdist_scale: 0.02
+  forward_point_distance: 0.325
+  stop_time_buffer: 0.2
+  scaling_speed: 0.25
+  max_scaling_factor: 0.2
+
+# Oscillation Prevention Parameters
+  oscillation_reset_dist: 0.05
+
+# Debugging
+  publish_traj_pc : true
+  publish_cost_grid_pc: true

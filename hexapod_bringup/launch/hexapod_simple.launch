@@ -7,13 +7,16 @@
     <!--<rosparam command="load" file="$(find hexapod_description)/params/$(arg joy_mapping).yaml" />-->
     <rosparam command="load" file="$(find hexapod_description)/params/$(arg config).yaml" />
     <rosparam command="load" file="$(find hexapod_description)/params/dynamixel.yaml" />
-    <param name="robot_description" command="$(find xacro)/xacro '$(find hexapod_description)/urdf/$(arg config)_model.xacro'" />
-    
-    <!--<node name="Hexapod_Teleop_Joystick" pkg="hexapod_teleop_joystick" type="hexapod_teleop_joystick" />-->
-    <include file="$(find hexapod_bringup)/launch/components/key_teleop.launch" />
+
+    <!-- defined in reignblaze_gazebo.launch -->
+    <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hexapod_description)/urdf/$(arg config)_model.xacro'" /> -->
 
     <include file="$(find hexapod_bringup)/launch/components/locomotion.launch" />
-    <include file="$(find hexapod_bringup)/launch/rviz.launch" />
+    <!-- <include file="$(find hexapod_bringup)/launch/rviz.launch" /> -->
+    <!-- <include file="$(find hexapod_bringup)/launch/components/laser_scan_matcher.launch" /> -->
+
+    <!-- Move to PC -->
+    <!-- <include file="$(find hexapod_bringup)/launch/components/key_teleop.launch" /> -->
 
     <!--<include file="$(find hexapod_bringup)/launch/components/cranePump.launch" />-->    
 </launch>

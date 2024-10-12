@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- urdf on rviz -->
+
+<launch>
+    <arg name="config" default="phantomX"/>
+    <rosparam command="load" file="$(find hexapod_description)/params/$(arg config).yaml" />
+    <rosparam command="load" file="$(find hexapod_description)/params/dynamixel.yaml" />
+    <param name="robot_description" command="$(find xacro)/xacro '$(find hexapod_description)/urdf/$(arg config)_model.xacro'" />
+    
+    <include file="$(find hexapod_bringup)/launch/components/key_teleop.launch" />
+
+    <node name="Hexapod_Controller" pkg="hexapod_controller" type="hexapod_controller" output="screen" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find hexapod_description)/rviz_prefs/urdf.rviz" />
+</launch>
