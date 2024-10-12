@@ -3,16 +3,20 @@
 
 <launch>
     <arg name="config" default="reignblaze"/>
-    <arg name="joy_mapping" default="joystick"/>
+    <!--<arg name="joy_mapping" default="joystick"/>-->
+    <!--<rosparam command="load" file="$(find hexapod_description)/params/$(arg joy_mapping).yaml" />-->
     <rosparam command="load" file="$(find hexapod_description)/params/$(arg config).yaml" />
     <rosparam command="load" file="$(find hexapod_description)/params/dynamixel.yaml" />
-    <rosparam command="load" file="$(find hexapod_description)/params/$(arg joy_mapping).yaml" />
-    <param name="robot_description" command="$(find xacro)/xacro '$(find hexapod_description)/urdf/$(arg config)_model.xacro'" />
-    <!--include file="$(find hexapod_bringup)/launch/components/joy_teleop.launch" /-->
+
+    <!-- defined in reignblaze_gazebo.launch -->
+    <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hexapod_description)/urdf/$(arg config)_model.xacro'" /> -->
+
     <include file="$(find hexapod_bringup)/launch/components/locomotion.launch" />
-    <include file="$(find hexapod_bringup)/launch/components/cranePump.launch" />
-    <node name="Hexapod_Teleop_Joystick" pkg="hexapod_teleop_joystick" type="hexapod_teleop_joystick" />
-    <node name="keyboard" pkg="keyboard" type="keyboard"/>
-    <node name="key_board_to_joy_node" pkg="key_board_to_joy" type="key_board_to_joy_node" />
-    <!--<include file="$(find hexapod_bringup)/launch/rviz.launch" /> /-->
+    <!-- <include file="$(find hexapod_bringup)/launch/rviz.launch" /> -->
+    <!-- <include file="$(find hexapod_bringup)/launch/components/laser_scan_matcher.launch" /> -->
+
+    <!-- Move to PC -->
+    <!-- <include file="$(find hexapod_bringup)/launch/components/key_teleop.launch" /> -->
+
+    <!--<include file="$(find hexapod_bringup)/launch/components/cranePump.launch" />-->    
 </launch>

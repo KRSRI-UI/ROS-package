@@ -1,0 +1,2 @@
+bool crane
+bool pump

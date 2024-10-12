@@ -2,6 +2,9 @@
 
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="phantomX">
 
+	<xacro:include filename="common/common_properties.xacro" />
+	<xacro:include filename="accessories/accessories.urdf.xacro" />
+
 	<!-- parameters -->
 	<xacro:property name="pi" value="3.1415926535897931" />
 	<xacro:property name="body_length_x" value="0.250" />
@@ -10,53 +13,82 @@
 	<xacro:property name="femur_length" value="0.065" />
 	<xacro:property name="tibia_length" value="0.133" />
 
-    <gazebo>
-        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-            <robotNamespace>/phantomX</robotNamespace>
-        </plugin>
-    </gazebo>
+	<gazebo>
+		<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+			<robotNamespace>/phantomX</robotNamespace>
+		</plugin>
+	</gazebo>
 
-    <link name="base_link"/>
+	<!--
+	<model name="default">
+		<plugin name="hexapod_controller" filename="libcontrol.so">
+			<robotNamespace>/phantomX</robotNamespace>
+		</plugin>
+	</model>
+	-->
 
-    <joint name="base_joint" type="fixed">
-        <parent link="base_link" />
-        <child link="body_link" />
-        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-    </joint>
+	<link name="base_footprint"/>
+
+	<joint name="base_joint" type="fixed">
+		<parent link="base_footprint"/>
+		<child link="base_link"/>
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+	</joint>
+
+	<link name="base_link"/>
+
+	<joint name="body_joint" type="fixed">
+		<parent link="base_link" />
+		<child link="body_link" />
+		<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+	</joint>
 
 	<link name="body_link">
-			<visual>
-	  			<origin	xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-      			<geometry>
-        			<mesh filename="package://hexapod_description/meshes/phantomX/body.stl" scale="0.001 0.001 0.001"/>
-      			</geometry>
-				<material name="">
-					<color rgba="0.7 0.7 0.7 1" />
-				</material>
-			</visual>
-			<collision>
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-            <geometry>
-                <mesh filename="package://hexapod_description/meshes/phantomX/body.stl" scale="0.001 0.001 0.001"/>
-            </geometry>
-            <material name="">
-                <color rgba="0.7 0.7 0.7 1"/>
-            </material>
-        </collision>
-        <inertial>
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-            <mass value="0.00001"/>
-            <inertia
-                ixx="1.0" ixy="0.0"  ixz="0.0"
-                iyy="1.0" iyz="0.0"
-                izz="1.0" />
-        </inertial>
-    </link>
-    <gazebo reference="body_link">
-        <material>Gazebo/DarkGrey</material>
-    </gazebo>
+		<visual>
+			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+			<geometry>
+				<mesh filename="package://hexapod_description/meshes/phantomX/body.stl" scale="0.001 0.001 0.001"/>
+			</geometry>
+			<material name="">
+				<color rgba="0.7 0.7 0.7 1" />
+			</material>
+		</visual>
+		<collision>
+			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+			<geometry>
+				<box size="${body_length_x} ${body_length_y} 0.05"/>
+			</geometry>
+			<material name="">
+				<color rgba="0.9 0.9 0.9 0.75"/>
+			</material>
+		</collision>
+		<!--
+		<inertial>
+			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+			<mass value="0.336"/>
+			<inertia
+				ixx="0.0005075" ixy="0.0" ixz="0.0"
+				iyy="0.0018200" iyz="0.0"
+				izz="0.0021875"/>
+		</inertial>
+		-->
+		<!--
+		<inertial>
+			<origin xyz="0.027 0.0 -0.175" rpy="0.0 0.0 0.0" />
+			<mass value="1.25"/>
+			<inertia
+				ixx="0.00008138" ixy="0.0" ixz="0.0"
+				iyy="0.00006771" iyz="0.0"
+				izz="0.00001888"/>
+		</inertial>
+		-->
+	</link>
+	<gazebo reference="body_link">
+		<material>Gazebo/DarkGrey</material>
+	</gazebo>
 
 	<!-- Head Pan and Tilt properties -->
+	<!--
 	<joint name="head_pan_joint" type="revolute">
 		<parent link="body_link"/>
 		<child link="head_pan_link"/>
@@ -65,15 +97,16 @@
 		<limit lower="-${3.14}" upper="${3.14}" effort="10000" velocity="100" />
 	</joint>
 	<link name="head_pan_link">
-        <inertial>
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-            <mass value="0.00001"/>
-            <inertia
-                ixx="1.0" ixy="0.0"  ixz="0.0"
-                iyy="1.0" iyz="0.0"
-                izz="1.0" />
-        </inertial>
-    </link>
+		<inertial>
+			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+			<mass value="0.00001"/>
+			<inertia
+				ixx="1.0" ixy="0.0"  ixz="0.0"
+				iyy="1.0" iyz="0.0"
+				izz="1.0" />
+		</inertial>
+	</link>
+
 	<joint name="head_tilt_joint" type="revolute">
 		<parent link="head_pan_link"/>
 		<child link="head_tilt_link"/>
@@ -82,32 +115,34 @@
 		<limit lower="-${3.14}" upper="${3.14}" effort="10000" velocity="100" />
 	</joint>
 	<link name="head_tilt_link">
-        <inertial>
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-            <mass value="0.00001"/>
-            <inertia
-                ixx="1.0" ixy="0.0"  ixz="0.0"
-                iyy="1.0" iyz="0.0"
-                izz="1.0" />
-        </inertial>
-    </link>
+		<inertial>
+			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+			<mass value="0.00001"/>
+			<inertia
+				ixx="1.0" ixy="0.0"  ixz="0.0"
+				iyy="1.0" iyz="0.0"
+				izz="1.0" />
+		</inertial>
+	</link>
+	-->
 
 	<!-- Camera properties -->
+	<!--
 	<joint name="camera_rgb_joint" type="fixed">
 		<parent link="head_tilt_link" />
 		<child link="camera_rgb_optical_frame" />
 		<origin xyz="0.0 0.0 0.0" rpy="${pi/2} ${pi} ${pi/2}" />
 	</joint>
 	<link name="camera_rgb_optical_frame">
-        <inertial>
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-            <mass value="0.00001"/>
-            <inertia
-                ixx="1.0" ixy="0.0"  ixz="0.0"
-                iyy="1.0" iyz="0.0"
-                izz="1.0" />
-        </inertial>
-    </link>
+		<inertial>
+			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+			<mass value="0.00001"/>
+			<inertia
+				ixx="1.0" ixy="0.0"  ixz="0.0"
+				iyy="1.0" iyz="0.0"
+				izz="1.0" />
+		</inertial>
+	</link>
 
 	<joint name="camera_depth_joint" type="fixed">
 		<parent link="head_tilt_link" />
@@ -115,60 +150,52 @@
 		<origin xyz="0.0 0.0 0.0" rpy="${pi/2} ${pi} ${pi/2}" />
 	</joint>
 	<link name="camera_depth_optical_frame" >
-        <inertial>
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-            <mass value="0.00001"/>
-            <inertia
-                ixx="1.0" ixy="0.0"  ixz="0.0"
-                iyy="1.0" iyz="0.0"
-                izz="1.0" />
-        </inertial>
-    </link>
+		<inertial>
+			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+			<mass value="0.00001"/>
+			<inertia
+			ixx="1.0" ixy="0.0"  ixz="0.0"
+			iyy="1.0" iyz="0.0"
+			izz="1.0" />
+		</inertial>
+	</link>
 
-<joint name="camera_depth_frame" type="fixed">
-	<parent link="head_tilt_link" />
-	<child link="camera_depth_frame_link" />
-	<origin xyz="0.0 0.0 0.0" />
-</joint>
-
-<link name="camera_depth_frame_link" >
-        <inertial>
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-            <mass value="0.00001"/>
-            <inertia
-                ixx="1.0" ixy="0.0"  ixz="0.0"
-                iyy="1.0" iyz="0.0"
-                izz="1.0" />
-        </inertial>
-    </link>
-
-	<!-- IMU properties -->
-	<joint name="imu_joint" type="fixed">
-		<parent link="base_link" />
-		<child link="imu_link" />
-		<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+	<joint name="camera_depth_frame" type="fixed">
+		<parent link="head_tilt_link" />
+		<child link="camera_depth_frame_link" />
+		<origin xyz="0.0 0.0 0.0" />
 	</joint>
-	<link name="imu_link">
-        <inertial>
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-            <mass value="0.00001"/>
-            <inertia
-                ixx="1.0" ixy="0.0"  ixz="0.0"
-                iyy="1.0" iyz="0.0"
-                izz="1.0" />
-        </inertial>
-    </link>
-	
+	<link name="camera_depth_frame_link" >
+		<inertial>
+			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+			<mass value="0.00001"/>
+			<inertia
+			ixx="1.0" ixy="0.0"  ixz="0.0"
+			iyy="1.0" iyz="0.0"
+			izz="1.0" />
+		</inertial>
+	</link>
+	-->
+
+	<joint name="mount_point_joint" type="fixed">
+		<parent link="body_link"/>
+		<child link="mount_point_link"/>
+		<origin xyz="0 0 0.03" rpy="0 0 0"/>
+	</joint>
+
 	<!-- Joint properties -->
-	<xacro:property name="joint_lower_limit" value="-${3.14}" />
-	<xacro:property name="joint_upper_limit" value="${3.14}" />
-	<xacro:property name="joint_effort" value="6.0" />
-	<xacro:property name="joint_velocity" value="0.524" />
+	<xacro:property name="joint_lower_limit" value="-2.6179939" />
+	<xacro:property name="joint_upper_limit" value="2.6179939" />
+	<xacro:property name="joint_effort" value="2.8" />
+	<xacro:property name="joint_velocity" value="5.6548668" />
+
+	<link name="mount_point_link"/>
 
 	<!-- Leg macro -->
 	<xacro:macro name="leg" params="side position x y angle axis">
 
 		<!-- leg position -->
+		<!--
 		<joint name="leg_center_joint_${side}${position}" type="fixed">
 			<origin xyz="${x} ${y} 0.0" rpy="0.0 0.0 0.0" />
 			<parent link="body_link" />
@@ -176,65 +203,67 @@
 		</joint>
 
 		<link name="leg_center_${side}${position}" >
-            <inertial>
-                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-                <mass value="0.00001"/>
-                <inertia
-                    ixx="1.0" ixy="0.0"  ixz="0.0"
-                    iyy="1.0" iyz="0.0"
-                    izz="1.0" />
-            </inertial>
-        </link>
+			<inertial>
+				<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+				<mass value="0.000001"/>
+				<inertia
+					ixx="0.0" ixy="0.0" ixz="0.0"
+					iyy="0.0" iyz="0.0"
+					izz="0.0"/>
+			</inertial>
+			
+		</link>
+		-->
 
 		<!-- coxa -->
 		<joint name="coxa_joint_${side}${position}" type="revolute">
-			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${angle}" />
-			<parent link="leg_center_${side}${position}" />
+			<origin xyz="${x} ${y} 0.0" rpy="0.0 0.0 ${angle}" />
+			<parent link="body_link" />
 			<child link="coxa_${side}${position}" />
 			<axis xyz="0.0 0.0 1.0" />
 			<limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort}" velocity="${joint_velocity}" />
 		</joint>
 		<transmission name="coxa_transmission_${side}${position}">
-            <type>transmission_interface/SimpleTransmission</type>
-            <joint name="coxa_joint_${side}${position}">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            </joint>
-            <actuator name="coxa_motor_${side}${position}">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <mechanicalReduction>1</mechanicalReduction>
-            </actuator>
-        </transmission>
-        <link name="coxa_${side}${position}">
-            <visual>
-                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-                <geometry>
-                    <mesh filename="package://hexapod_description/meshes/phantomX/coxa.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-                <material name="">
-                    <color rgba="0.7 0.7 0.7 1"/>
-                </material>
-            </visual>
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-                <geometry>
-                    <mesh filename="package://hexapod_description/meshes/phantomX/coxa.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-                <material name="">
-                    <color rgba="0.7 0.7 0.7 1" />
-                </material>
-            </collision>
-            <inertial>
-                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-                <mass value="0.00001"/>
-                <inertia
-                    ixx="1.0" ixy="0.0"  ixz="0.0"
-                    iyy="1.0" iyz="0.0"
-                    izz="1.0" />
-            </inertial>
-        </link>
-        <gazebo reference="coxa_${side}${position}">
-            <material>Gazebo/DarkGrey</material>
-        </gazebo>
+			<type>transmission_interface/SimpleTransmission</type>
+			<joint name="coxa_joint_${side}${position}">
+				<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			</joint>
+			<actuator name="coxa_motor_${side}${position}">
+				<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+				<mechanicalReduction>1</mechanicalReduction>
+			</actuator>
+		</transmission>
+		<link name="coxa_${side}${position}">
+			<visual>
+				<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+				<geometry>
+					<mesh filename="package://hexapod_description/meshes/phantomX/coxa.stl" scale="0.001 0.001 0.001"/>
+				</geometry>
+				<material name="">
+					<color rgba="0.7 0.7 0.7 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0.006 0.0  0.0" rpy="0 0.0 0.0" />
+				<geometry>
+					<box size="0.0375 0.032 0.05"/>
+				</geometry>
+				<material name="">
+					<color rgba="0.9 0.9 0.9 0.75" />
+				</material>
+			</collision>
+			<inertial>
+				<origin xyz="0.006 0.0 0.0" rpy="0.0 0.0 0.0" />
+				<mass value="0.056"/>
+				<inertia
+					ixx="0.0000164453" ixy="0.0" ixz="0.0"
+					iyy="0.0000182292" iyz="0.0"
+					izz="0.0000113412"/>
+			</inertial>
+		</link>
+		<gazebo reference="coxa_${side}${position}">
+			<material>Gazebo/DarkGrey</material>
+		</gazebo>
 
 		<!-- femur -->
 		<joint name="femur_joint_${side}${position}" type="revolute">
@@ -245,46 +274,46 @@
 			<limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort}" velocity="${joint_velocity}" />
 		</joint>
 		<transmission name="femur_transmission_${side}${position}">
-            <type>transmission_interface/SimpleTransmission</type>
-            <joint name="femur_joint_${side}${position}">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            </joint>
-            <actuator name="femur_motor_${side}${position}">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <mechanicalReduction>1</mechanicalReduction>
-            </actuator>
-        </transmission>
-        <link name="femur_${side}${position}">
-            <visual>
-                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-                <geometry>
-                    <mesh filename="package://hexapod_description/meshes/phantomX/femur.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-                <material name="">
-                    <color rgba="0.7 0.7 0.7 1"/>
-                </material>
-            </visual>
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-                <geometry>
-                    <mesh filename="package://hexapod_description/meshes/phantomX/femur.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-                <material name="">
-                    <color rgba="0.7 0.7 0.7 1" />
-                </material>
-            </collision>
-            <inertial>
-                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-                <mass value="0.00001"/>
-                <inertia
-                    ixx="1.0" ixy="0.0"  ixz="0.0"
-                    iyy="1.0" iyz="0.0"
-                    izz="1.0" />
-            </inertial>
-        </link>
-        <gazebo reference="femur_${side}${position}">
-            <material>Gazebo/DarkGrey</material>
-        </gazebo>
+			<type>transmission_interface/SimpleTransmission</type>
+			<joint name="femur_joint_${side}${position}">
+				<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			</joint>
+			<actuator name="femur_motor_${side}${position}">
+				<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+				<mechanicalReduction>1</mechanicalReduction>
+			</actuator>
+		</transmission>
+		<link name="femur_${side}${position}">
+			<visual>
+				<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+				<geometry>
+					<mesh filename="package://hexapod_description/meshes/phantomX/femur.stl" scale="0.001 0.001 0.001"/>
+				</geometry>
+				<material name="">
+					<color rgba="0.7 0.7 0.7 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="-0.004 -0.014 0.0" rpy="0.0 0.0 -${pi/12}" />
+				<geometry>
+					<box size="0.032 0.051 0.040"/>
+				</geometry>
+				<material name="">
+					<color rgba="0.9 0.9 0.9 0.75" />
+				</material>
+			</collision>
+			<inertial>
+				<origin xyz="-0.004 -0.014 0.0" rpy="0.0 0.0 -${pi/12}" />
+				<mass value="0.056"/>
+				<inertia
+					ixx="0.0000196047" ixy="0.0" ixz="0.0"
+					iyy="0.0000122453" iyz="0.0"
+					izz="0.0000169167"/>
+			</inertial>
+		</link>
+		<gazebo reference="femur_${side}${position}">
+			<material>Gazebo/DarkGrey</material>
+		</gazebo>
 
 		<!-- tibia -->
 		<joint name="tibia_joint_${side}${position}" type="revolute">
@@ -295,50 +324,59 @@
 			<limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort}" velocity="${joint_velocity}" />
 		</joint>
 		<transmission name="tibia_transmission_${side}${position}">
-            <type>transmission_interface/SimpleTransmission</type>
-            <joint name="tibia_joint_${side}${position}">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            </joint>
-            <actuator name="tibia_motor_${side}${position}">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <mechanicalReduction>1</mechanicalReduction>
-            </actuator>
-        </transmission>
-        <link name="tibia_${side}${position}">
-            <visual>
-                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-                <geometry>
-                    <mesh filename="package://hexapod_description/meshes/phantomX/tibia.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-                <material name="">
-                    <color rgba="0.7 0.7 0.7 1"/>
-                </material>
-            </visual>
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-                <geometry>
-                    <mesh filename="package://hexapod_description/meshes/phantomX/tibia.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-                <material name="">
-                    <color rgba="0.7 0.7 0.7 1" />
-                </material>
-            </collision>
-            <inertial>
-                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-                <mass value="0.00001"/>
-                <inertia
-                    ixx="1.0" ixy="0.0"  ixz="0.0"
-                    iyy="1.0" iyz="0.0"
-                    izz="1.0" />
-            </inertial>
-        </link>
-        <gazebo reference="tibia_${side}${position}">
-            <material>Gazebo/DarkGrey</material>
-        </gazebo>
+			<type>transmission_interface/SimpleTransmission</type>
+			<joint name="tibia_joint_${side}${position}">
+				<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			</joint>
+			<actuator name="tibia_motor_${side}${position}">
+				<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+				<mechanicalReduction>1</mechanicalReduction>
+			</actuator>
+		</transmission>
+		<link name="tibia_${side}${position}">
+			<visual>
+				<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+				<geometry>
+					<mesh filename="package://hexapod_description/meshes/phantomX/tibia.stl" scale="0.001 0.001 0.001"/>
+				</geometry>
+				<material name="">
+					<color rgba="0.7 0.7 0.7 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0.05 0.025 0.0" rpy="0.0 0.0 0.0" />
+				<geometry>
+					<box size="0.125 0.032 0.040"/>
+				</geometry>
+				<material name="">
+					<color rgba="0.9 0.9 0.9 0.75" />
+				</material>
+			</collision>
+			<collision>
+				<origin xyz="0.13 0.0285 0.0" rpy="0.0 0.0 0.0" />
+				<geometry>
+					<sphere radius="0.005"/>
+				</geometry>
+				<material name="">
+					<color rgba="0.9 0.9 0.9 0.75" />
+				</material>
+			</collision>
+			<inertial>
+				<origin xyz="0.05 0.025 0.0" rpy="0.0 0.0 0.0" />
+				<mass value="0.056"/>
+				<inertia
+					ixx="0.0000122453" ixy="0.0" ixz="0.0"
+					iyy="0.0000803833" iyz="0.0"
+					izz="0.0000776953"/>
+			</inertial>
+		</link>
+		<gazebo reference="tibia_${side}${position}">
+			<material>Gazebo/DarkGrey</material>
+		</gazebo>
 
 	</xacro:macro>
 
-<!-- Build robot model -->
+	<!-- Build robot model -->
 	<xacro:leg side="R" position="R" x="-0.120" y="-0.060" angle="-${pi*3/4}" axis="1" />
 	<xacro:leg side="R" position="M" x="0.0" y="-0.100" angle="-${pi/2}" axis="1" />
 	<xacro:leg side="R" position="F" x="0.120" y="-0.060" angle="-${pi/4}" axis="1" />

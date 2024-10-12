@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+
+<!-- based on rtabmap_demos/launch/demo_turtlebot3_navigation.launch -->
+
+<launch>
+
+  <arg name="use_ekf" default="true"/>
+  <arg name="use_sim_odom" default="false"/>
+
+  <!-- Arguments -->
+  <arg name="open_rviz" default="true"/>
+  <arg name="rtabmap_viz" default="true"/>
+  <arg name="move_forward_only" default="false"/>
+
+  <arg name="with_camera" default="true"/>
+  <arg name="localization" default="false"/>
+  <arg name="database_path" default="~/.ros/rtabmap.db"/>
+  <arg     if="$(arg localization)" name="rtabmap_args" default=""/>
+  <arg unless="$(arg localization)" name="rtabmap_args" default="-d"/>
+
+  <include file="$(find hexapod_navigation)/launch/filter_lidar.launch" />
+
+  <!-- Define wheter to use ekf or gazebo's odom -->
+  <group if="$(arg use_ekf)">
+    <node pkg="hexapod_navigation" type="imu_preprocess" 
+          name="imu_preprocess" output="screen"
+          clear_params="true">
+        <param name="from" type="string" value="imu" />
+        <param name="to" type="string" value="imu/data" />
+        <rosparam file="$(find hexapod_navigation)/config/imu_covariance_value.yaml" command="load" />
+    </node>
+    <include file="$(find hexapod_navigation)/launch/robot_localization_sim.launch" />  
+  </group>
+
+  <group if="$(arg use_sim_odom)">
+    <!-- publish odom tf -->
+    <node pkg="hexapod_navigation" type="odom_frame_publisher"
+        name="odom_frame_publisher">
+    </node>
+  </group>
+  <!-- Define wheter to use ekf or gazebo's odom -->
+
+  <group ns="rtabmap">
+
+    <!-- Use RGBD synchronization -->
+    <!-- Here is a general example using a standalone nodelet, 
+         but it is recommended to attach this nodelet to nodelet 
+         manager of the camera to avoid topic serialization -->
+    <node pkg="rtabmap_sync" type="rgbd_sync" name="rgbd_sync" output="screen">
+      <remap from="rgb/image"         to="/cam_d435i/color/image_raw"/>
+      <remap from="depth/image"       to="/cam_d435i/depth/image_rect_raw"/>
+      <remap from="rgb/camera_info"   to="/cam_d435i/color/camera_info"/>
+      <!-- <remap from="rgbd_image"        to="rgbd_image"/> --> <!-- output -->
+
+      <!-- Should be true for not synchronized camera topics 
+           (e.g., false for kinectv2, zed, realsense, true for xtion, kinect360)-->
+      <!-- <param name="approx_sync"       value="true"/> -->
+    </node>
+  
+    <node name="rtabmap" pkg="rtabmap_slam" type="rtabmap" output="screen" args="$(arg rtabmap_args)">
+      <param name="database_path"       type="string" value="$(arg database_path)"/>
+      <param name="frame_id"            type="string" value="base_footprint"/>
+      <param name="subscribe_rgb"   type="bool" value="false"/>
+      <param name="subscribe_depth" type="bool" value="false"/>
+      <param name="subscribe_rgbd" type="bool" value="true"/>
+      <param name="subscribe_scan"    type="bool"   value="true"/>
+
+      <!-- Should be true for not synchronized camera topics 
+           (e.g., false for kinectv2, zed, realsense, true for xtion, kinect360)-->
+      <param name="approx_sync"       type="bool"   value="true"/>
+
+      <!-- use actionlib to send goals to move_base --> 
+      <param name="use_action_for_goal" type="bool" value="true"/>
+      <remap from="move_base"            to="/move_base"/>
+	
+      <!-- inputs -->
+      <remap from="scan"            to="/scan_filtered"/>
+      <remap from="odom"            to="/odom/ekf/enc_imu"/>
+      <!-- <remap from="odom"            to="/gazebo_odom"/> -->
+      <remap from="rgbd_image"      to="rgbd_image"/>
+
+      <param name="queue_size" type="int" value="10"/>
+
+      <!-- output -->
+      <remap from="grid_map" to="/map"/>
+	
+      <!-- RTAB-Map's parameters -->
+      <param name="RGBD/NeighborLinkRefining" type="string" value="true"/>
+      <param name="RGBD/ProximityBySpace"     type="string" value="true"/>
+      <param name="RGBD/AngularUpdate"        type="string" value="0.01"/>
+      <param name="RGBD/LinearUpdate"         type="string" value="0.01"/>
+      <param name="RGBD/OptimizeFromGraphEnd" type="string" value="false"/>
+      <param name="Grid/Sensor"            type="string" value="false"/> <!-- occupancy grid from lidar -->
+      <param name="Reg/Strategy"              type="string" value="1"/> <!-- 1=ICP -->
+      <param name="Reg/Force3DoF"             type="string" value="true"/>
+      
+      <!-- ICP parameters -->
+      <param name="Icp/VoxelSize"                 type="string" value="0.05"/>
+      <param name="Icp/MaxCorrespondenceDistance" type="string" value="0.1"/>
+      <param name="GridGlobal/MinSize"           type="string" value="20"/>
+
+      <!-- localization mode -->
+      <param     if="$(arg localization)" name="Mem/IncrementalMemory" type="string" value="false"/>
+      <param unless="$(arg localization)" name="Mem/IncrementalMemory" type="string" value="true"/>
+    </node>
+    
+    <!-- visualization with rtabmapviz -->
+    <node if="$(arg rtabmap_viz)" pkg="rtabmap_viz" type="rtabmap_viz" name="rtabmap_viz" args="-d $(find rtabmap_demos)/launch/config/rgbd_gui.ini" output="screen">
+      <param name="subscribe_scan"   type="bool"   value="true"/>
+      <param name="subscribe_odom"   type="bool"   value="true"/>
+      <param name="frame_id"         type="string" value="base_footprint"/>
+      <param name="approx_sync"      type="bool"   value="true"/>
+
+      <remap from="odom"            to="/odom/ekf/enc_imu"/>
+      <!-- <remap from="odom"            to="/gazebo_odom"/> -->
+      <remap from="scan"            to="/scan_filtered"/>
+    </node>
+  </group>
+
+  <!-- move_base -->
+  <include file="$(find hexapod_navigation)/launch/move_base_sim.launch" />
+
+  <!-- rviz -->
+  <group if="$(arg open_rviz)">
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find hexapod_navigation)/rviz/hexapod_navigation.rviz"/>
+  </group>
+
+</launch>

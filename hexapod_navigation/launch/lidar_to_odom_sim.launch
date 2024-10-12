@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <arg name="laser_scan_mather_name" default="laser_scan_matcher_node" />
+
+  <arg name="publish_covariance" default="true"/>
+  <arg name="map_frame_id" default="odom"/>
+  <arg name="base_frame_id" default="base_footprint"/>
+
+  <arg name="lidar_input_topic" default="scan_filtered"/>
+  
+  <!-- Define use of imu and the topic -->
+  <!-- imu message type is sensor_msgs/Imu -->
+  <arg name="use_imu" default="true"/>
+  <arg name="imu_input_topic" default="imu/data"/>
+  
+  <!-- Define use of external odom and the topic -->
+  <!-- odom message type is nav_msgs/Odometry -->
+  <arg name="use_odom" default="false"/>
+  <arg name="odom_input_topic" default="gazebo_odom"/>
+
+  <!-- Remap published topic-->
+  <arg name="odom_pose_topic" default="lsm/pose2d"/>
+  <arg name="odom_pose_cov_topic" default="lsm/pos_cov"/>
+  <arg name="odom_pose_cov_stamped_topic" default="lsm/pos_cov_stm"/>
+
+  <group if="$(arg publish_covariance)">
+    <param name="$(arg laser_scan_mather_name)/do_compute_covariance" value="1"/>
+    <param name="$(arg laser_scan_mather_name)/publish_pose_with_covariance" value="true"/>
+    <param name="$(arg laser_scan_mather_name)/publish_pose_with_covariance_stamped" value="true"/>
+  </group>
+  
+  <node pkg="laser_scan_matcher" type="laser_scan_matcher_node"
+    name="$(arg laser_scan_mather_name)" output="screen">
+    <remap from="scan"  to="$(arg lidar_input_topic)"/>
+    <remap from="imu/data"  to="$(arg imu_input_topic)"/>
+    <remap from="odom"  to="$(arg odom_input_topic)"/>
+    
+    <remap from="pose2D"  to="$(arg odom_pose_topic)"/>
+    <remap from="pose_with_covariance"  to="$(arg odom_pose_cov_topic)"/>
+    <remap from="pose_with_covariance_stamped"  to="$(arg odom_pose_cov_stamped_topic)"/>
+
+    <param name="fixed_frame" value="$(arg map_frame_id)"/>
+    <param name="base_frame" value="$(arg base_frame_id)"/>
+
+    <param name="use_odom" value="$(arg use_odom)"/>
+    <param name="use_imu" value="$(arg use_imu)"/>
+    <param name="publish_tf" value="false"/>
+    <param name="max_iterations" value="10"/>
+  </node>
+
+</launch>

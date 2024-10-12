@@ -1,19 +1,20 @@
 # Configuration Settings
 
-# Non teleop mode for naviagtion stack, Gazebo, etc type modes.
+# Non teleop mode for navigation stack, Gazebo, etc type modes.
 # Controller will still have standup and sitdown functions for safty reasons 
 NON_TELEOP: false
 
 # Speed limit in Hz for the master loop rate
-MASTER_LOOP_RATE: 500
+MASTER_LOOP_RATE: 1600  # Speed limit of hexapod_controller.cpp loop ( Will go slower than this )
+# MASTER_LOOP_RATE: 2200
 
 # Static time division to convert cmd_vel into segments for controller loop
-VELOCITY_DIVISION: 0.033
+VELOCITY_DIVISION: 0.033  # Instead of getting delta time we are calculating with a static division
 
 # Twist Max Values
 # Currently these are set from a topic echo of the "twist" message coming out of the locomotion node.
-MAX_METERS_PER_SEC: 0.082
-MAX_RADIANS_PER_SEC: !degrees 17.629
+MAX_METERS_PER_SEC: 0.19  # Aldy's Note : faktor pengali untuk cmd_vel_.linear.x & cmd_vel_.linear.y
+MAX_RADIANS_PER_SEC: !degrees 17.629  # Aldy's Note : faktor pengali untuk cmd_vel_.angular.z
 
 # Number of head segments
 # First segment would be yaw, second would be pitch
@@ -25,38 +26,44 @@ NUMBER_OF_LEGS: 6
 # Number of leg segments ( 3dof or 4dof )
 NUMBER_OF_LEG_SEGMENTS: 3
 
+# ===== CONSTANT ===== CONSTANT ===== CONSTANT ===== CONSTANT ===== CONSTANT =====
 # Define Initial Coxa Offsets in Radians ['RR', 'RM', 'RF', 'LR', 'LM', 'LF']
 # IK is solved in local space currently, hence the reason right and left have same angle offsets.
-INIT_COXA_ANGLE: [!degrees -45, !degrees 0.0, !degrees 45, !degrees -45.0, !degrees 0.0, !degrees 45.0]
+INIT_COXA_ANGLE: [!degrees -26.25, !degrees 0.0, !degrees 26.25, !degrees -26.25, !degrees 0.0, !degrees 26.25]  # Initial coxa offsets in radians, Aldy's Note : sesuai setup di Autodesk Inventor & URDF
 
 # Define distance in meters from coxa joint to the center ['RR', 'RM', 'RF', 'LR', 'LM', 'LF']
 # IK is solved in local space currently, hence the reason right and left have same distance values
-COXA_TO_CENTER_X: [-0.065, 0.0, 0.065, -0.065, 0.0, 0.065]
-COXA_TO_CENTER_Y: [0.0325, 0.0625, 0.0325, 0.0325, 0.0625, 0.0325]
+COXA_TO_CENTER_X: [-0.065, 0.0, 0.065, -0.065, 0.0, 0.065]  # Distance from coxa joint to the center pivot, Aldy's Note : sesuai dimensi di Autodesk Inventor & URDF
+COXA_TO_CENTER_Y: [0.0325, 0.0625, 0.0325, 0.0325, 0.0625, 0.0325]  # Distance from coxa joint to the center pivot, Aldy's Note : sesuai dimensi di Autodesk Inventor & URDF
+# ===== CONSTANT ===== CONSTANT ===== CONSTANT ===== CONSTANT ===== CONSTANT =====
 
 # Define Start Position Of Feet in meters from the coxa joint ['RR', 'RM', 'RF', 'LR', 'LM', 'LF']
 # Middle Legs is coxa axis to foot in meters
-# math to find positions of front and back legs POS_Y = Middle leg start position * cos(45 degrees) (0.707)
-# math to find positions of front and back legs POS_X = Middle leg start position * sin(45 degrees) (0.707)
+# math to find positions of front and rear legs POS_X = Middle leg start position * sin(26.25 degrees) (0.442)
+# math to find positions of front and rear legs POS_Y = Middle leg start position * cos(26.25 degrees) (0.897)
 # IK is solved in local space currently, hence the reason right and left have same distance values
-INIT_FOOT_POS_X: [-0.069, 0.0, 0.069, -0.069, 0.0, 0.069]
-INIT_FOOT_POS_Y: [0.069, 0.098, 0.069, 0.069, 0.098, 0.069]
-INIT_FOOT_POS_Z: [0.060, 0.060, 0.060, 0.060, 0.060, 0.060]
+# INIT_FOOT_POS_X: [-0.017691, 0.0, 0.017691, -0.017691, 0.0, 0.017691]
+INIT_FOOT_POS_X: [-0.04190685, 0.0, 0.04190685, -0.04190685, 0.0, 0.04190685]
+# INIT_FOOT_POS_Y: [0.035874, 0.04, 0.035874, 0.035874, 0.04, 0.035874]  # Start position Of feet, Aldy's Note : 0.0960 ~ COXA_LENGTH + FEMUR_LENGTH
+INIT_FOOT_POS_Y: [0.084978692, 0.09475, 0.084978692, 0.084978692, 0.09475, 0.084978692]
+INIT_FOOT_POS_Z: [0.07, 0.07, 0.07, 0.07, 0.07, 0.07]
+# INIT_FOOT_POS_Z: [0.0517, 0.0517, 0.0517, 0.0517, 0.0517, 0.0517]
 
-# Define Leg Measurements in meters
+# Define Leg Segment Measurements in meters (same as in urdf)
 COXA_LENGTH:   0.044
 FEMUR_LENGTH:  0.0545
 TIBIA_LENGTH:  0.1019
-TARSUS_LENGTH: 0.00
+TARSUS_LENGTH: 0.0
 
-# Body FK maximum rotation
+# Body FK maximum rotation (Mechanical limits)
 BODY_MAX_ROLL: !degrees 8
 BODY_MAX_PITCH: !degrees 8
+BODY_MAX_YAW: !degrees 20
 
-# Body Standing Height
-STANDING_BODY_HEIGHT: 0.04
+# Body Standing - Height
+STANDING_BODY_HEIGHT: 0.02  # (STANDING_BODY_HEIGHT + INIT_FOOT_POS_Z) = 0.09
 
-# Head FK maximum rotation
+# Head FK maximum rotation (Mechanical limits)
 HEAD_MAX_YAW: !degrees 55
 HEAD_MAX_PITCH: !degrees 25
 
@@ -67,32 +74,63 @@ COMPENSATE_INCREMENT: !degrees 0.01
 COMPENSATE_TO_WITHIN: !degrees 1
 
 # Gait Settings
-CYCLE_LENGTH: 50
-LEG_LIFT_HEIGHT: 0.038
-MAX_LIFT_HEIGHT: 0.050
+CYCLE_LENGTH: 50  # Number of steps in cycle
+LEG_LIFT_HEIGHT: 0.0375  # Height of a leg cycle
+MAX_LIFT_HEIGHT: 0.05  # Not used in any script
 
+# Gait style Tripod or Ripple
 GAIT_STYLE: "TRIPOD"
-# Speed in Hz that the servos interpolate between gait poses
-INTERPOLATION_LOOP_RATE: 2000
+# Speed in Hz that the servos interpolate between gait poses (phantomX: 550, golem: 900)
+INTERPOLATION_LOOP_RATE: 2000  # Speed limit of transmitServoPositions loop in servo_driver.cpp
+# INTERPOLATION_LOOP_RATE: 2500
 
 # Servo descriptions
+# SERVOS: {
+#     '01': {name: coxa_joint_RR, type: AX, id: 8, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 20},
+#     '02': {name: femur_joint_RR, type: AX, id: 10, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 0},
+#     '03': {name: tibia_joint_RR, type: AX, id: 12, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 41},
+#     '04': {name: coxa_joint_RM, type: AX, id: 14, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 0},
+#     '05': {name: femur_joint_RM, type: AX, id: 16, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 0},
+#     '06': {name: tibia_joint_RM, type: AX, id: 18, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 41},
+#     '07': {name: coxa_joint_RF, type: AX, id: 2, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 20},
+#     '08': {name: femur_joint_RF, type: AX, id: 4, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 0},
+#     '09': {name: tibia_joint_RF, type: AX, id: 6, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 41},
+#     '10': {name: coxa_joint_LR, type: AX, id: 7, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 20},
+#     '11': {name: femur_joint_LR, type: AX, id: 9, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 0},
+#     '12': {name: tibia_joint_LR, type: AX, id: 11, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 41},
+#     '13': {name: coxa_joint_LM, type: AX, id: 13, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 0},
+#     '14': {name: femur_joint_LM, type: AX, id: 15, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 0},
+#     '15': {name: tibia_joint_LM, type: AX, id: 17, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 41},
+#     '16': {name: coxa_joint_LF, type: AX, id: 1, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 20},
+#     '17': {name: femur_joint_LF, type: AX, id: 3, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 0},
+#     '18': {name: tibia_joint_LF, type: AX, id: 5, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 41}
+# }
+
+#"ticks:" Total number of ticks, meaning resolution of dynamixel servo
+#"center;" Center value of dynamixel servo
+#"max_radians:" Max rotation your servo is manufactured to do. i.e. 360 degrees for MX etc.
+#"sign:" If the servo is physically mounted backwards this sign is flipped, sesuai URDF
+#"offset:" Physical hardware offset of servo horn
+
 SERVOS: {
-    '01': {name: coxa_joint_RR, type: AX, id: 8, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 0},
-    '02': {name: femur_joint_RR, type: AX, id: 10, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees -5},
-    '03': {name: tibia_joint_RR, type: AX, id: 12, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 48},
+    '01': {name: coxa_joint_RR, type: AX, id: 8, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 18},
+    '02': {name: femur_joint_RR, type: AX, id: 10, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 0},
+    '03': {name: tibia_joint_RR, type: AX, id: 12, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 41},
     '04': {name: coxa_joint_RM, type: AX, id: 14, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 0},
-    '05': {name: femur_joint_RM, type: AX, id: 16, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees -15},
-    '06': {name: tibia_joint_RM, type: AX, id: 18, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 51},
-    '07': {name: coxa_joint_RF, type: AX, id: 2, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 0},
-    '08': {name: femur_joint_RF, type: AX, id: 4, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 0},
-    '09': {name: tibia_joint_RF, type: AX, id: 6, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 48},
-    '10': {name: coxa_joint_LR, type: AX, id: 7, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 0},
+    '05': {name: femur_joint_RM, type: AX, id: 16, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 0},
+    '06': {name: tibia_joint_RM, type: AX, id: 18, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 41},
+    '07': {name: coxa_joint_RF, type: AX, id: 2, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 18},
+    '08': {name: femur_joint_RF, type: AX, id: 4, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 0},
+    '09': {name: tibia_joint_RF, type: AX, id: 6, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 41},
+    '10': {name: coxa_joint_LR, type: AX, id: 7, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 18},
     '11': {name: femur_joint_LR, type: AX, id: 9, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 0},
-    '12': {name: tibia_joint_LR, type: AX, id: 11, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 50},
+    '12': {name: tibia_joint_LR, type: AX, id: 11, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 41},
     '13': {name: coxa_joint_LM, type: AX, id: 13, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 0},
     '14': {name: femur_joint_LM, type: AX, id: 15, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 0},
-    '15': {name: tibia_joint_LM, type: AX, id: 17, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 52},
-    '16': {name: coxa_joint_LF, type: AX, id: 1, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 0},
+    '15': {name: tibia_joint_LM, type: AX, id: 17, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 41},
+    '16': {name: coxa_joint_LF, type: AX, id: 1, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 18},
     '17': {name: femur_joint_LF, type: AX, id: 3, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 0},
-    '18': {name: tibia_joint_LF, type: AX, id: 5, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 52}
+    '18': {name: tibia_joint_LF, type: AX, id: 5, ticks: 1024, center: 512, max_radians: !degrees 300, sign: -1, offset: !degrees 41}
+#    '19': {name: pan_joint, type: AX, id: 19, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 0},
+#    '20': {name: tilt_joint, type: AX, id: 20, ticks: 1024, center: 512, max_radians: !degrees 300, sign: 1, offset: !degrees 0}
 }

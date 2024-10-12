@@ -26,9 +26,9 @@ install(DIRECTORY include/${PROJECT_NAME}/
    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h"
 )
 
-install(DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-)
+# install(DIRECTORY launch/
+#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+# )
 
 install(FILES hexapod_teleop_joystick.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

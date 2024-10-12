@@ -27,9 +27,12 @@ add_library( servo_driver src/servo_driver.cpp )
 target_link_libraries( servo_driver ${catkin_LIBRARIES} )
 add_dependencies( servo_driver hexapod_msgs_generate_messages_cpp )
 
-add_executable( hexapod_controller src/hexapod_controller.cpp )
+add_executable( hexapod_controller src/hexapod_controller.cpp)
 target_link_libraries( hexapod_controller ${catkin_LIBRARIES} control gait ik servo_driver )
 add_dependencies( hexapod_controller hexapod_msgs_generate_messages_cpp )
+add_executable( joint_command_publisher src/joint_command_publisher.cpp )
+target_link_libraries( joint_command_publisher ${catkin_LIBRARIES})
+
 
 install(TARGETS hexapod_controller
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
@@ -42,9 +45,9 @@ install(DIRECTORY include/${PROJECT_NAME}/
    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h"
 )
 
-install(DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-)
+# install(DIRECTORY launch/
+#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+# )
 
 install(FILES hexapod_controller.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

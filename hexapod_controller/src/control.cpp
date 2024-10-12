@@ -88,12 +88,12 @@ Control::Control( void )
     head_scalar_sub_ = nh_.subscribe<geometry_msgs::AccelStamped>( "/head_scalar", 1, &Control::headCallback, this );
     state_sub_ = nh_.subscribe<std_msgs::Bool>( "/state", 1, &Control::stateCallback, this );
     imu_override_sub_ = nh_.subscribe<std_msgs::Bool>( "/imu/imu_override", 1, &Control::imuOverrideCallback, this );
-    imu_sub_ = nh_.subscribe<sensor_msgs::Imu>( "/imu/data", 1, &Control::imuCallback, this );
+    // imu_sub_ = nh_.subscribe<sensor_msgs::Imu>( "/imu/data", 1, &Control::imuCallback, this );
 
     // Topics we are publishing
     sounds_pub_ = nh_.advertise<hexapod_msgs::Sounds>( "/sounds", 10 );
     joint_state_pub_ = nh_.advertise<sensor_msgs::JointState>( "/joint_states", 10 );
-    odom_pub_ = nh_.advertise<nav_msgs::Odometry>( "/odometry/calculated", 50 );
+    odom_pub_ = nh_.advertise<nav_msgs::Odometry>( "/odom", 50 );
     twist_pub_ = nh_.advertise<geometry_msgs::TwistWithCovarianceStamped>( "/twist", 50 );
 
     // Send service request to the imu to re-calibrate
@@ -154,7 +154,7 @@ void Control::publishOdometry( const geometry_msgs::Twist &gait_vel )
     geometry_msgs::TransformStamped odom_trans;
     odom_trans.header.stamp = current_time_odometry_;
     odom_trans.header.frame_id = "odom";
-    odom_trans.child_frame_id = "base_link";
+    odom_trans.child_frame_id = "base_footprint";
 
     odom_trans.transform.translation.x = pose_x_;
     odom_trans.transform.translation.y = pose_y_;
@@ -168,7 +168,7 @@ void Control::publishOdometry( const geometry_msgs::Twist &gait_vel )
     nav_msgs::Odometry odom;
     odom.header.stamp = current_time_odometry_;
     odom.header.frame_id = "odom";
-    odom.child_frame_id = "base_link";
+    odom.child_frame_id = "base_footprint";
 
     // set the position
     odom.pose.pose.position.x = pose_x_;
@@ -271,9 +271,9 @@ void Control::publishJointStates( const hexapod_msgs::LegsJoints &legs, const he
 
 void Control::cmd_velCallback( const geometry_msgs::TwistConstPtr &cmd_vel_msg )
 {
-    cmd_vel_incoming_.linear.x = cmd_vel_msg->linear.x;
-    cmd_vel_incoming_.linear.y = cmd_vel_msg->linear.y;
-    cmd_vel_incoming_.angular.z = cmd_vel_msg->angular.z;
+    cmd_vel_incoming_.linear.x = (cmd_vel_msg->linear.x) * 0.15;
+    cmd_vel_incoming_.linear.y = (cmd_vel_msg->linear.y) * 0.15;
+    cmd_vel_incoming_.angular.z = (cmd_vel_msg->angular.z) * 0.15;
 }
 
 //==============================================================================
